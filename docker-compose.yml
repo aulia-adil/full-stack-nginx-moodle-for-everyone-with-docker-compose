@@ -46,7 +46,7 @@ services:
         depends_on:
             moodle:
                 condition: service_healthy
-        image: nginx:stable
+        image: nginx:1.27
         container_name: webserver
         networks:
             - backend
@@ -84,7 +84,7 @@ services:
     certbot:
         depends_on:
             - webserver
-        image: certbot/certbot:latest
+        image: certbot/certbot:v3.0.1
         container_name: certbot
         networks:
             - backend
@@ -100,14 +100,14 @@ services:
             retries: 20
         environment:
             TZ: '${LOCAL_TIMEZONE}'
-        entrypoint: /bin/sh -c "certbot certonly --webroot --webroot-path /tmp/acme-challenge --rsa-key-size 4096 --non-interactive --agree-tos --no-eff-email --force-renewal --email ${LETSENCRYPT_EMAIL} -d ${DOMAIN_NAME} -d www.${DOMAIN_NAME} -d mail.${DOMAIN_NAME}; 
+        entrypoint: /bin/sh -c "certbot certonly --webroot --webroot-path /tmp/acme-challenge --rsa-key-size 4096 --non-interactive --agree-tos --no-eff-email --force-renewal --email ${LETSENCRYPT_EMAIL} -d ${DOMAIN_NAME} -d www.${DOMAIN_NAME}; 
             trap exit TERM; while :; do certbot renew --dry-run; sleep 12h & wait $${!}; done;"
 
     phpmyadmin:
         depends_on:
             certbot:
                 condition: service_healthy
-        image: phpmyadmin:latest
+        image: phpmyadmin:5.2.1
         container_name: phpmyadmin
         networks:
             - backend
@@ -187,7 +187,7 @@ services:
         command: bash -c "${DATABASE_PACKAGE_MANAGER} && export PMA_CONTROLUSER=${PMA_CONTROLUSER} export PMA_CONTROLPASS=${PMA_CONTROLPASS} && envsubst '$$PMA_CONTROLUSER,$$PMA_CONTROLPASS' < /docker-entrypoint-initdb.d/create_tables.sql.template > /docker-entrypoint-initdb.d/create_tables.sql && docker-entrypoint.sh --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci"
 
     redis:
-        image: redis:latest
+        image: redis:7.4.1
         container_name: redis
         networks:
             - backend
@@ -208,7 +208,7 @@ services:
         command: "redis-server ${REDIS_CONF_PREFIX}/redis/redis.conf"
 
     mail:
-        image: mailhog/mailhog:latest
+        image: mailhog/mailhog:v1.0.1
         container_name: mail
         networks:
             - backend
@@ -223,7 +223,7 @@ services:
         entrypoint: sh -c "echo ${PMA_HTPASSWD_USERNAME}:$(MailHog bcrypt ${PMA_HTPASSWD_PASSWORD}) > ${DOMAIN_NAME}-auth && MailHog"
 
     backup:
-        image: offen/docker-volume-backup:latest
+        image: offen/docker-volume-backup:v2.43.0
         container_name: backup
         networks:
             - backend
