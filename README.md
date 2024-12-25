@@ -82,7 +82,7 @@ Create rules to open ports to the internet, or to a specific IPv4 address or ran
 download with
 
 ```
-git clone https://github.com/damalis/full-stack-nginx-moodle-for-everyone-with-docker-compose.git
+git clone https://github.com/aulia-adil/full-stack-nginx-moodle-for-everyone-with-docker-compose.git
 ```
 
 Open a terminal and `cd` to the folder in which `docker-compose.yml` is saved and run:
