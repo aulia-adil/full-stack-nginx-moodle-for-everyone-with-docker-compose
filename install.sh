@@ -363,29 +363,11 @@ do
 done
 echo "Ok."
 
-which_db=""
+which_db="mariadb"
 db_authentication_password=$pma_password
 db_package_manager="apt-get update \&\& apt-get install -y gettext-base"
 db_admin_commandline="mariadb-admin"
 db_connect_extension="mariadb"
-PS3="Select the database: "
-select db in mariadb mysql
-do
-	which_db=$db
-	if [ $REPLY -eq 2 ]
-	then
-		db_package_manager="microdnf install -y gettext"
-		db_admin_commandline="mysqladmin"
-		db_connect_extension="mysqli"
-	fi
-	if [ $REPLY -eq 1 ] || [ $REPLY -eq 2 ]
-	then
-		break
-	else
-		PS3="Select the database: "
-	fi
-done
-echo "Ok."
 
 local_timezone_regex="^[a-zA-Z0-9/+_-]{1,}$"
 read -p 'Enter container local Timezone(default : America/Los_Angeles, to see the other timezones, https://docs.diladele.com/docker/timezones.html): ' local_timezone
